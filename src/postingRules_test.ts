@@ -1,5 +1,10 @@
-import { assertEquals } from "testing/asserts.ts";
+import {
+  assertArrayIncludes,
+  assertEquals,
+  assertExists,
+} from "testing/asserts.ts";
 import { Customer } from "./customer.ts";
+import { Entry, EntryType } from "./entry.ts";
 import { MonetaryEvent, UsageAccountingEvent } from "./events.ts";
 import {
   AmmountFormulaPostingRule,
@@ -15,21 +20,30 @@ Deno.test("Multiply by rate posting rule", () => {
     new MultiplyByRatePostingRule("BaseUsage"),
     new Date(2023, 3, 1),
   );
+  serviceAgreement.addPostingRule(
+    "Tax",
+    new AmmountFormulaPostingRule(.055, 0, "Tax"),
+    new Date(2023, 3, 1),
+  );
 
   const customer = new Customer("WPH", serviceAgreement);
 
-  const usage = new UsageAccountingEvent(
+  const event = new UsageAccountingEvent(
     50,
     new Date(2023, 3, 1),
     new Date(2023, 3, 1),
     customer,
   );
 
-  usage.process();
+  event.process();
 
-  const resultingEntry = customer.getEntries().at(0);
-  assertEquals(resultingEntry?.amount, 500);
-  assertEquals(resultingEntry?.type, "BaseUsage");
+  const [usageEntry, taxEntry] = customer.getEntries();
+
+  assertEntry(usageEntry, "BaseUsage", 500);
+  assertEntry(taxEntry, "Tax", 27.5);
+
+  assertArrayIncludes(event.getResultingEntries(), [usageEntry]);
+  assertArrayIncludes(event.getAllResultingEntries(), [taxEntry]);
 });
 
 Deno.test("Amount formula posting rule", () => {
@@ -44,6 +58,11 @@ Deno.test("Amount formula posting rule", () => {
     new AmmountFormulaPostingRule(.5, 10, "ServiceFee"),
     new Date(2023, 3, 1),
   );
+  serviceAgreement.addPostingRule(
+    "Tax",
+    new AmmountFormulaPostingRule(.055, 0, "Tax"),
+    new Date(2023, 3, 1),
+  );
 
   const customer = new Customer("WPH", serviceAgreement);
 
@@ -56,9 +75,11 @@ Deno.test("Amount formula posting rule", () => {
   );
 
   event.process();
-  const resultingEntry = customer.getEntries().at(0);
-  assertEquals(resultingEntry?.amount, 30);
-  assertEquals(resultingEntry?.type, "ServiceFee");
+
+  const [serviceFeeEntry, taxEntry] = customer.getEntries();
+
+  assertEntry(serviceFeeEntry, "ServiceFee", 30);
+  assertEntry(taxEntry, "Tax", 1.65);
 });
 
 Deno.test("Amount formula posting rule with a change", () => {
@@ -78,6 +99,11 @@ Deno.test("Amount formula posting rule with a change", () => {
     new AmmountFormulaPostingRule(.5, 15, "ServiceFee"),
     new Date(2023, 2, 1),
   );
+  serviceAgreement.addPostingRule(
+    "Tax",
+    new AmmountFormulaPostingRule(.055, 0, "Tax"),
+    new Date(2023, 3, 1),
+  );
 
   const customer = new Customer("WPH", serviceAgreement);
 
@@ -90,9 +116,9 @@ Deno.test("Amount formula posting rule with a change", () => {
   );
 
   event.process();
-  const resultingEntry = customer.getEntries().at(0);
-  assertEquals(resultingEntry?.amount, 35);
-  assertEquals(resultingEntry?.type, "ServiceFee");
+
+  const [resultingEntry] = customer.getEntries();
+  assertEntry(resultingEntry, "ServiceFee", 35);
 });
 
 Deno.test("Amount formula posting rule with service agreement change", () => {
@@ -105,6 +131,11 @@ Deno.test("Amount formula posting rule with service agreement change", () => {
   serviceAgreement.addPostingRule(
     "ServiceCall",
     new AmmountFormulaPostingRule(.5, 10, "ServiceFee"),
+    new Date(2023, 3, 1),
+  );
+  serviceAgreement.addPostingRule(
+    "Tax",
+    new AmmountFormulaPostingRule(.055, 0, "Tax"),
     new Date(2023, 3, 1),
   );
 
@@ -128,11 +159,25 @@ Deno.test("Amount formula posting rule with service agreement change", () => {
 
   usage2.process();
 
-  const resultingEntry = customer.getEntries().at(0);
-  assertEquals(resultingEntry?.amount, 250);
-  assertEquals(resultingEntry?.type, "BaseUsage");
+  const [
+    baseUsageEntry,
+    taxEntry,
+    baseUsageEntry2,
+    taxEntry2,
+  ] = customer.getEntries();
 
-  const resultingEntry2 = customer.getEntries().at(1);
-  assertEquals(resultingEntry2?.amount, 510);
-  assertEquals(resultingEntry2?.type, "BaseUsage");
+  assertEntry(baseUsageEntry, "BaseUsage", 250);
+  assertEntry(taxEntry, "Tax", 13.75);
+  assertEntry(baseUsageEntry2, "BaseUsage", 510);
+  assertEntry(taxEntry2, "Tax", 28.05);
 });
+
+function assertEntry(
+  entry: Entry | undefined,
+  type: EntryType,
+  amount: number,
+): void {
+  assertExists(entry);
+  assertEquals(entry.type, type);
+  assertEquals(entry.amount, amount);
+}

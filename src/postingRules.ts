@@ -2,6 +2,7 @@ import { type EntryType } from "./entry.ts";
 import {
   type AccountingEvent,
   MonetaryEvent,
+  TaxEvent,
   UsageAccountingEvent,
 } from "./events.ts";
 import { type Money } from "./money.ts";
@@ -14,7 +15,13 @@ abstract class PostingRule {
   }
 
   process(event: AccountingEvent): void {
-    this.#makeEntry(event, this.calculateAmount(event));
+    const amount = this.calculateAmount(event);
+
+    this.#makeEntry(event, amount);
+
+    if (this.#isTaxable()) {
+      new TaxEvent(event, amount).process();
+    }
   }
 
   #makeEntry(event: AccountingEvent, amount: Money): void {
@@ -26,6 +33,10 @@ abstract class PostingRule {
 
     event.customer.addEntry(newEntry);
     event.addResultingEntry(newEntry);
+  }
+
+  #isTaxable(): boolean {
+    return this.type !== "Tax";
   }
 
   protected abstract calculateAmount(event: AccountingEvent): Money;

@@ -1,6 +1,6 @@
 import { Money } from "./money.ts";
 
-type EntryType = "BaseUsage" | "ServiceFee";
+type EntryType = "BaseUsage" | "ServiceFee" | "Tax";
 
 type Entry = Readonly<{
   amount: Money;

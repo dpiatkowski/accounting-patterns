@@ -3,10 +3,11 @@ import { type Entry } from "./entry.ts";
 import { Money } from "./money.ts";
 import { type PostingRule } from "./postingRules.ts";
 
-type EventType = "Usage" | "ServiceCall";
+type EventType = "Usage" | "ServiceCall" | "Tax";
 
 class AccountingEvent {
   readonly #resultingEntries: Entry[] = [];
+  readonly #secondaryEvents: AccountingEvent[] = [];
 
   constructor(
     readonly type: EventType,
@@ -16,8 +17,28 @@ class AccountingEvent {
   ) {
   }
 
+  getResultingEntries(): Entry[] {
+    return this.#resultingEntries;
+  }
+
   addResultingEntry(entry: Entry): void {
     this.#resultingEntries.push(entry);
+  }
+
+  addSecondaryEvent(event: AccountingEvent): void {
+    this.#secondaryEvents.push(event);
+  }
+
+  getAllResultingEntries(): Entry[] {
+    const result = [...this.#resultingEntries];
+
+    for (const event of this.#secondaryEvents) {
+      for (const entry of event.getResultingEntries()) {
+        result.push(entry);
+      }
+    }
+
+    return result;
   }
 
   process(): void {
@@ -65,4 +86,31 @@ class MonetaryEvent extends AccountingEvent {
   }
 }
 
-export { AccountingEvent, type EventType, MonetaryEvent, UsageAccountingEvent };
+class TaxEvent extends MonetaryEvent {
+  #baseEvent: AccountingEvent;
+
+  constructor(baseEvent: AccountingEvent, taxableAmount: Money) {
+    super(
+      taxableAmount,
+      "Tax",
+      baseEvent.whenOccured,
+      baseEvent.whenNoticed,
+      baseEvent.customer,
+    );
+
+    if (baseEvent.type == this.type) {
+      throw new Error("Probable endless recursion");
+    }
+
+    this.#baseEvent = baseEvent;
+    baseEvent.addSecondaryEvent(this);
+  }
+}
+
+export {
+  AccountingEvent,
+  type EventType,
+  MonetaryEvent,
+  TaxEvent,
+  UsageAccountingEvent,
+};
