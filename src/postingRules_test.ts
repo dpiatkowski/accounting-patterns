@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.177.0/testing/asserts.ts";
+import { assertEquals } from "testing/asserts.ts";
 import { Customer } from "./customer.ts";
 import { MonetaryEvent, UsageAccountingEvent } from "./events.ts";
 import {
