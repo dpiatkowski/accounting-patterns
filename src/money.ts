@@ -1,3 +1,5 @@
 type Money = number;
 
-export { type Money };
+type Currency = "PLN" | "EUR" | "USD";
+
+export { type Currency, type Money };
