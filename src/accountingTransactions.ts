@@ -39,8 +39,7 @@ class AccountingTransaction {
 
   post(): void {
     if (!this.canPost()) {
-      // TODO: custom error?
-      throw new Error("Unable to post transaction");
+      throw new UnableToPostTransactionError();
     }
 
     for (const entry of this.#entries) {
@@ -67,4 +66,11 @@ class AccountingTransaction {
   }
 }
 
-export { AccountingTransaction };
+class UnableToPostTransactionError extends Error {
+  constructor() {
+    super();
+    this.name = "UnableToPostTransactionError";
+  }
+}
+
+export { AccountingTransaction, UnableToPostTransactionError };
