@@ -1,24 +1,70 @@
-import { Account, deposit, withdrawal } from "./account.ts";
+import { Account } from "./account.ts";
 import { Money } from "./money.ts";
 
-// need to abstract this later
-type TwoLeggedEntry = {
-  amount: Money;
-  date: Date;
-};
+class AccountingEntry {
+  constructor(
+    readonly amount: Money,
+    readonly date: Date,
+    readonly account: Account,
+    readonly transaction: AccountingTransaction,
+  ) {
+  }
 
-class TwoLeggedAccountingTransaction {
-  readonly #entries: TwoLeggedEntry[] = [];
-
-  constructor(amount: Money, from: Account, to: Account, date: Date) {
-    const fromEntry = withdrawal(amount, date);
-    from.addEntry(fromEntry);
-    this.#entries.push(fromEntry);
-
-    const toEntry = deposit(amount, date);
-    to.addEntry(toEntry);
-    this.#entries.push(toEntry);
+  post(): void {
+    this.account.addEntry(this);
   }
 }
 
-export { TwoLeggedAccountingTransaction };
+class AccountingTransaction {
+  readonly #date: Date;
+  readonly #entries: AccountingEntry[] = [];
+  readonly #wasPosted: boolean = false;
+
+  constructor(date: Date) {
+    this.#date = date;
+  }
+
+  add(amount: Money, account: Account): void {
+    if (this.#wasPosted) {
+      // TODO: custom error?
+      throw new Error(
+        "Cannot add entry to a transaction that is already posted",
+      );
+    }
+
+    this.#entries.push(
+      new AccountingEntry(amount, this.#date, account, this),
+    );
+  }
+
+  post(): void {
+    if (!this.canPost()) {
+      // TODO: custom error?
+      throw new Error("Unable to post transaction");
+    }
+
+    for (const entry of this.#entries) {
+      entry.post();
+    }
+  }
+
+  canPost(): boolean {
+    return this.#wasPosted == false && this.#balance() == 0;
+  }
+
+  #balance(): Money {
+    if (this.#entries.length == 0) {
+      return 0;
+    }
+
+    let result = 0;
+
+    for (const entry of this.#entries) {
+      result += entry.amount;
+    }
+
+    return result;
+  }
+}
+
+export { AccountingTransaction };

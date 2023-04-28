@@ -1,7 +1,6 @@
+import { AccountingTransaction } from "./accountingTransactions.ts";
 import { DateRange } from "./dateRange.ts";
 import { type Currency, type Money } from "./money.ts";
-import { TwoLeggedAccountingTransaction } from "./accountingTransactions.ts";
-import { AccountingEvent } from "./events.ts";
 
 type AccountEntry = {
   amount: Money;
@@ -38,7 +37,10 @@ class Account {
   }
 
   withdraw(amount: Money, target: Account, date: Date): void {
-    new TwoLeggedAccountingTransaction(amount, this, target, date);
+    const transaction = new AccountingTransaction(date);
+    transaction.add(-amount, this);
+    transaction.add(amount, target);
+    transaction.post();
   }
 
   balance(dateorDateRange: Date | DateRange): Money {

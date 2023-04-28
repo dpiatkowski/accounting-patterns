@@ -54,7 +54,7 @@ Deno.test("Test balance using transactions", () => {
   revenue.withdraw(200, defferd, new Date());
 
   const now = new Date();
-  assertEquals(500, recivables.balance(now));
-  assertEquals(200, defferd.balance(now));
-  assertEquals(-700, revenue.balance(now));
+  assertEquals(revenue.balance(now), -700);
+  assertEquals(defferd.balance(now), 200);
+  assertEquals(recivables.balance(now), 500);
 });
