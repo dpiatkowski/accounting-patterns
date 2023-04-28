@@ -1,5 +1,7 @@
 import { DateRange } from "./dateRange.ts";
 import { type Currency, type Money } from "./money.ts";
+import { TwoLeggedAccountingTransaction } from "./accountingTransactions.ts";
+import { AccountingEvent } from "./events.ts";
 
 type AccountEntry = {
   amount: Money;
@@ -33,6 +35,10 @@ class Account {
 
     // missing validation for Money object currency
     this.#entries.push(entry);
+  }
+
+  withdraw(amount: Money, target: Account, date: Date): void {
+    new TwoLeggedAccountingTransaction(amount, this, target, date);
   }
 
   balance(dateorDateRange: Date | DateRange): Money {

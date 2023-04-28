@@ -44,3 +44,17 @@ Deno.test("Account with entry history", () => {
   assertEquals(account.deposits(new DateRange(beginning, end)), 30);
   assertEquals(account.withdrawals(new DateRange(beginning, end)), -15);
 });
+
+Deno.test("Test balance using transactions", () => {
+  const revenue = new Account("PLN");
+  const defferd = new Account("PLN");
+  const recivables = new Account("PLN");
+
+  revenue.withdraw(500, recivables, new Date());
+  revenue.withdraw(200, defferd, new Date());
+
+  const now = new Date();
+  assertEquals(500, recivables.balance(now));
+  assertEquals(200, defferd.balance(now));
+  assertEquals(-700, revenue.balance(now));
+});
