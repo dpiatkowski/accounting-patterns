@@ -18,7 +18,7 @@ class AccountingEntry {
 class AccountingTransaction {
   readonly #date: Date;
   readonly #entries: AccountingEntry[] = [];
-  readonly #wasPosted: boolean = false;
+  #wasPosted = false;
 
   constructor(date: Date) {
     this.#date = date;
@@ -26,10 +26,7 @@ class AccountingTransaction {
 
   add(amount: Money, account: Account): void {
     if (this.#wasPosted) {
-      // TODO: custom error?
-      throw new Error(
-        "Cannot add entry to a transaction that is already posted",
-      );
+      throw new ImmutableTransactionError();
     }
 
     this.#entries.push(
@@ -45,6 +42,8 @@ class AccountingTransaction {
     for (const entry of this.#entries) {
       entry.post();
     }
+
+    this.#wasPosted = true;
   }
 
   canPost(): boolean {
@@ -66,6 +65,13 @@ class AccountingTransaction {
   }
 }
 
+class ImmutableTransactionError extends Error {
+  constructor() {
+    super();
+    this.name = "ImmutableTransactionError";
+  }
+}
+
 class UnableToPostTransactionError extends Error {
   constructor() {
     super();
@@ -73,4 +79,8 @@ class UnableToPostTransactionError extends Error {
   }
 }
 
-export { AccountingTransaction, UnableToPostTransactionError };
+export {
+  AccountingTransaction,
+  ImmutableTransactionError,
+  UnableToPostTransactionError,
+};
