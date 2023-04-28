@@ -1,32 +1,38 @@
 import { DateRange } from "./dateRange.ts";
-import { Entry, EntryType } from "./entry.ts";
 import { type Currency, type Money } from "./money.ts";
 
+type AccountEntry = {
+  amount: Money;
+  date: Date;
+};
+
+function deposit(amount: Money, date: Date): AccountEntry {
+  return {
+    amount,
+    date,
+  };
+}
+
+function withdrawal(amount: Money, date: Date): AccountEntry {
+  return {
+    amount: -amount,
+    date,
+  };
+}
+
 class Account {
-  readonly #entries: Entry[] = [];
+  readonly #entries: AccountEntry[] = [];
 
   constructor(readonly currency: Currency) {
   }
 
-  depositMoney(amount: Money, date: Date): void {
-    this.#addEntry(amount, date, "Deposit");
-  }
-
-  withdrawMoney(amount: Money, date: Date): void {
-    this.#addEntry(-amount, date, "Withdrawal");
-  }
-
-  #addEntry(amount: Money, date: Date, type: EntryType): void {
-    if (amount == 0) {
+  addEntry(entry: AccountEntry): void {
+    if (entry.amount == 0) {
       throw new Error("Creating entry with 0 as amount");
     }
 
     // missing validation for Money object currency
-    this.#entries.push({
-      amount: amount,
-      date: date,
-      type: type,
-    });
+    this.#entries.push(entry);
   }
 
   balance(dateorDateRange: Date | DateRange): Money {
@@ -56,7 +62,7 @@ class Account {
 
   #calculateValueFromEntries(
     dateRange: DateRange,
-    entryPredicate: (entry: Entry) => boolean,
+    entryPredicate: (entry: AccountEntry) => boolean,
   ): Money {
     let result = 0;
 
@@ -70,4 +76,4 @@ class Account {
   }
 }
 
-export { Account };
+export { Account, type AccountEntry, deposit, withdrawal };

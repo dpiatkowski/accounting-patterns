@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from "testing/asserts.ts";
-import { Account } from "./account.ts";
+import { Account, deposit, withdrawal } from "./account.ts";
 import { DateRange } from "./dateRange.ts";
 
 Deno.test("Empty account", () => {
@@ -14,11 +14,11 @@ Deno.test("Depositing or withdrawing 0 throws", () => {
   const account = new Account("PLN");
 
   assertThrows(() => {
-    account.depositMoney(0, new Date());
+    account.addEntry(deposit(0, new Date()));
   });
 
   assertThrows(() => {
-    account.withdrawMoney(0, new Date());
+    account.addEntry(withdrawal(0, new Date()));
   });
 });
 
@@ -27,8 +27,8 @@ Deno.test("Account with entry history", () => {
 
   const beginning = new Date();
 
-  account.depositMoney(10, new Date());
-  account.depositMoney(20, new Date());
+  account.addEntry(deposit(10, new Date()));
+  account.addEntry(deposit(20, new Date()));
 
   const midpoint = new Date();
 
@@ -36,7 +36,7 @@ Deno.test("Account with entry history", () => {
   assertEquals(account.deposits(new DateRange(beginning, midpoint)), 30);
   assertEquals(account.withdrawals(new DateRange(beginning, midpoint)), 0);
 
-  account.withdrawMoney(15, new Date());
+  account.addEntry(withdrawal(15, new Date()));
 
   const end = new Date();
 
