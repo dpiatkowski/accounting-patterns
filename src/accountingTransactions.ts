@@ -50,7 +50,7 @@ class AccountingTransaction {
     return this.#wasPosted == false && this.#balance() == 0;
   }
 
-  #balance(): Money {
+  #balance(): number {
     if (this.#entries.length == 0) {
       return 0;
     }
@@ -58,7 +58,7 @@ class AccountingTransaction {
     let result = 0;
 
     for (const entry of this.#entries) {
-      result += entry.amount;
+      result += entry.amount.value;
     }
 
     return result;

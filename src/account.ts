@@ -1,6 +1,6 @@
 import { AccountingTransaction } from "./accountingTransactions.ts";
 import { DateRange } from "./dateRange.ts";
-import { type Currency, type Money } from "./money.ts";
+import { type Currency, Money } from "./money.ts";
 
 type AccountEntry = {
   amount: Money;
@@ -16,7 +16,7 @@ function deposit(amount: Money, date: Date): AccountEntry {
 
 function withdrawal(amount: Money, date: Date): AccountEntry {
   return {
-    amount: -amount,
+    amount: amount.negate(),
     date,
   };
 }
@@ -28,7 +28,7 @@ class Account {
   }
 
   addEntry(entry: AccountEntry): void {
-    if (entry.amount == 0) {
+    if (entry.amount.value == 0) {
       throw new Error("Creating entry with 0 as amount");
     }
 
@@ -38,7 +38,7 @@ class Account {
 
   withdraw(amount: Money, target: Account, date: Date): void {
     const transaction = new AccountingTransaction(date);
-    transaction.add(-amount, this);
+    transaction.add(amount.negate(), this);
     transaction.add(amount, target);
     transaction.post();
   }
@@ -57,14 +57,14 @@ class Account {
   deposits(dateRange: DateRange): Money {
     return this.#calculateValueFromEntries(
       dateRange,
-      (entry) => entry.amount > 0,
+      (entry) => entry.amount.value > 0,
     );
   }
 
   withdrawals(dateRange: DateRange): Money {
     return this.#calculateValueFromEntries(
       dateRange,
-      (entry) => entry.amount < 0,
+      (entry) => entry.amount.value < 0,
     );
   }
 
@@ -72,11 +72,11 @@ class Account {
     dateRange: DateRange,
     entryPredicate: (entry: AccountEntry) => boolean,
   ): Money {
-    let result = 0;
+    let result = Money.zero("PLN");
 
     for (const entry of this.#entries) {
       if (dateRange.includes(entry.date) && entryPredicate(entry)) {
-        result += entry.amount;
+        result = result.add(entry.amount);
       }
     }
 

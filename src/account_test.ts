@@ -1,64 +1,70 @@
-import { assertEquals, assertThrows } from "testing/asserts.ts";
+import { assert, assertThrows } from "testing/asserts.ts";
 import { Account, deposit, withdrawal } from "./account.ts";
 import { DateRange } from "./dateRange.ts";
+import { Money } from "./money.ts";
+
+const currency = "PLN";
 
 Deno.test("Empty account", () => {
-  const account = new Account("PLN");
+  const account = new Account(currency);
 
   const now = new Date();
+  const dateRange = new DateRange(now, now);
 
-  assertEquals(account.balance(new DateRange(now, now)), 0);
-  assertEquals(account.deposits(new DateRange(now, now)), 0);
-  assertEquals(account.withdrawals(new DateRange(now, now)), 0);
+  assert(account.balance(dateRange).equals(Money.zero(currency)));
+  assert(account.deposits(dateRange).equals(Money.zero(currency)));
+  assert(account.withdrawals(dateRange).equals(Money.zero(currency)));
 });
 
 Deno.test("Depositing or withdrawing 0 throws", () => {
-  const account = new Account("PLN");
+  const account = new Account(currency);
 
   assertThrows(() => {
-    account.addEntry(deposit(0, new Date()));
+    account.addEntry(deposit(Money.zero(currency), new Date()));
   });
 
   assertThrows(() => {
-    account.addEntry(withdrawal(0, new Date()));
+    account.addEntry(withdrawal(Money.zero(currency), new Date()));
   });
 });
 
 Deno.test("Account with entry history", () => {
-  const account = new Account("PLN");
+  const account = new Account(currency);
 
   const beginning = new Date();
 
-  account.addEntry(deposit(10, new Date()));
-  account.addEntry(deposit(20, new Date()));
+  account.addEntry(deposit(new Money(10, currency), new Date()));
+  account.addEntry(deposit(new Money(20, currency), new Date()));
 
   const midpoint = new Date();
+  const midpointRange = new DateRange(beginning, midpoint);
 
-  assertEquals(account.balance(new Date()), 30);
-  assertEquals(account.deposits(new DateRange(beginning, midpoint)), 30);
-  assertEquals(account.withdrawals(new DateRange(beginning, midpoint)), 0);
+  assert(account.balance(new Date()).equals(new Money(30, currency)));
+  assert(account.deposits(midpointRange).equals(new Money(30, currency)));
+  assert(account.withdrawals(midpointRange).equals(Money.zero(currency)));
 
-  account.addEntry(withdrawal(15, new Date()));
+  account.addEntry(withdrawal(new Money(15, currency), new Date()));
 
   const end = new Date();
+  const endRange = new DateRange(beginning, end);
 
-  assertEquals(account.balance(new Date()), 15);
-  assertEquals(account.deposits(new DateRange(beginning, end)), 30);
-  assertEquals(account.withdrawals(new DateRange(beginning, end)), -15);
+  assert(account.balance(new Date()).equals(new Money(15, currency)));
+  assert(account.deposits(endRange).equals(new Money(30, currency)));
+  assert(account.withdrawals(endRange).equals(new Money(-15, currency)));
 });
 
 Deno.test("Test balance using transactions", () => {
-  const revenue = new Account("PLN");
-  const defferd = new Account("PLN");
-  const recivables = new Account("PLN");
+  const revenue = new Account(currency);
+  const defferd = new Account(currency);
+  const recivables = new Account(currency);
 
   const transactionDate = new Date(2023, 0, 1);
 
-  revenue.withdraw(500, recivables, transactionDate);
-  revenue.withdraw(200, defferd, transactionDate);
+  revenue.withdraw(new Money(500, currency), recivables, transactionDate);
+  revenue.withdraw(new Money(200, currency), defferd, transactionDate);
 
   const dateRange = new DateRange(transactionDate, new Date());
-  assertEquals(revenue.balance(dateRange), -700);
-  assertEquals(defferd.balance(dateRange), 200);
-  assertEquals(recivables.balance(dateRange), 500);
+  assert(revenue.balance(dateRange).equals(new Money(-700, currency)));
+  assert(defferd.balance(dateRange).equals(new Money(200, currency)));
+  assert(recivables.balance(dateRange).equals(new Money(500, currency)));
 });

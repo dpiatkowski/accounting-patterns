@@ -49,10 +49,10 @@ class MultiplyByRatePostingRule extends PostingRule {
 
   protected calculateAmount(event: AccountingEvent): Money {
     if (event instanceof UsageAccountingEvent) {
-      return event.amount * event.rate;
+      return event.amount.multiply(event.rate);
     }
 
-    return 0;
+    throw new Error("Cannot calculate amount for this type of event");
   }
 }
 
@@ -65,12 +65,12 @@ class AmmountFormulaPostingRule extends PostingRule {
     super(type);
   }
 
-  protected calculateAmount(event: AccountingEvent): number {
+  protected calculateAmount(event: AccountingEvent): Money {
     if (event instanceof MonetaryEvent) {
-      return event.amount * this.multiplier + this.fixedFee;
+      return event.amount.multiply(this.multiplier).add(this.fixedFee);
     }
 
-    return 0;
+    throw new Error("Cannot calculate amount for this type of event");
   }
 }
 
@@ -85,11 +85,13 @@ class PoolCapPostingRule extends PostingRule {
 
   protected calculateAmount(event: AccountingEvent): Money {
     if (event instanceof UsageAccountingEvent) {
-      const rate = event.amount > this.usageLimit ? event.rate : this.rate;
-      return event.amount * rate;
+      const rate = event.amount.value > this.usageLimit
+        ? event.rate
+        : this.rate;
+      return event.amount.multiply(rate);
     }
 
-    return 0;
+    throw new Error("Cannot calculate amount for this type of event");
   }
 }
 

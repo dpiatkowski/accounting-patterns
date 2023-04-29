@@ -61,7 +61,7 @@ class AccountingEvent {
 
 class UsageAccountingEvent extends AccountingEvent {
   constructor(
-    readonly amount: number,
+    readonly amount: Money,
     readonly whenOccured: Date,
     readonly whenNoticed: Date,
     readonly customer: Customer,
