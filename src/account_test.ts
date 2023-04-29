@@ -5,9 +5,11 @@ import { DateRange } from "./dateRange.ts";
 Deno.test("Empty account", () => {
   const account = new Account("PLN");
 
-  assertEquals(account.balance(new Date()), 0);
-  assertEquals(account.deposits(new DateRange(new Date(), new Date())), 0);
-  assertEquals(account.withdrawals(new DateRange(new Date(), new Date())), 0);
+  const now = new Date();
+
+  assertEquals(account.balance(now), 0);
+  assertEquals(account.deposits(new DateRange(now, now)), 0);
+  assertEquals(account.withdrawals(new DateRange(now, now)), 0);
 });
 
 Deno.test("Depositing or withdrawing 0 throws", () => {
@@ -50,11 +52,13 @@ Deno.test("Test balance using transactions", () => {
   const defferd = new Account("PLN");
   const recivables = new Account("PLN");
 
-  revenue.withdraw(500, recivables, new Date());
-  revenue.withdraw(200, defferd, new Date());
+  const transactionDate = new Date(2023, 0, 1);
 
-  const now = new Date();
-  assertEquals(revenue.balance(now), -700);
-  assertEquals(defferd.balance(now), 200);
-  assertEquals(recivables.balance(now), 500);
+  revenue.withdraw(500, recivables, transactionDate);
+  revenue.withdraw(200, defferd, transactionDate);
+
+  const dateRange = new DateRange(transactionDate, new Date());
+  assertEquals(revenue.balance(dateRange), -700);
+  assertEquals(defferd.balance(dateRange), 200);
+  assertEquals(recivables.balance(dateRange), 500);
 });
