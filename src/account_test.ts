@@ -7,7 +7,7 @@ Deno.test("Empty account", () => {
 
   const now = new Date();
 
-  assertEquals(account.balance(now), 0);
+  assertEquals(account.balance(new DateRange(now, now)), 0);
   assertEquals(account.deposits(new DateRange(now, now)), 0);
   assertEquals(account.withdrawals(new DateRange(now, now)), 0);
 });
