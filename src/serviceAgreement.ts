@@ -1,4 +1,4 @@
-import { type AccountingEvent, type EventType } from "./events.ts";
+import { AccountingEvent, type EventType } from "./events/mod.ts";
 import { type PostingRule } from "./postingRules.ts";
 import { SingleTemporalCollection } from "./temporalCollection.ts";
 

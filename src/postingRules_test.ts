@@ -5,7 +5,6 @@ import {
 } from "testing/asserts.ts";
 import { Customer } from "./customer.ts";
 import { Entry, EntryType } from "./entry.ts";
-import { MonetaryEvent, UsageAccountingEvent } from "./events.ts";
 import {
   AmmountFormulaPostingRule,
   MultiplyByRatePostingRule,
@@ -13,6 +12,7 @@ import {
 } from "./postingRules.ts";
 import { ServiceAgreement } from "./serviceAgreement.ts";
 import { Money } from "./money.ts";
+import { MonetaryEvent, UsageAccountingEvent } from "./events/mod.ts";
 
 const currency = "PLN";
 

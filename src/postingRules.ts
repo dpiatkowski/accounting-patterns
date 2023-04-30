@@ -1,10 +1,10 @@
 import { type EntryType } from "./entry.ts";
 import {
-  type AccountingEvent,
+  AccountingEvent,
   MonetaryEvent,
   TaxEvent,
   UsageAccountingEvent,
-} from "./events.ts";
+} from "./events/mod.ts";
 import { type Money } from "./money.ts";
 
 abstract class PostingRule<TEvent extends AccountingEvent> {
