@@ -1,34 +1,44 @@
-import { type EventType } from "./events.ts";
+import { type AccountingEvent, type EventType } from "./events.ts";
 import { type PostingRule } from "./postingRules.ts";
 import { SingleTemporalCollection } from "./temporalCollection.ts";
 
 class ServiceAgreement {
   readonly #postingRules: Map<
     EventType,
-    SingleTemporalCollection<PostingRule>
-  > = new Map<EventType, SingleTemporalCollection<PostingRule>>();
+    SingleTemporalCollection<PostingRule<AccountingEvent>>
+  > = new Map<
+    EventType,
+    SingleTemporalCollection<PostingRule<AccountingEvent>>
+  >();
 
   constructor(readonly rate: number) {
   }
 
-  addPostingRule(eventType: EventType, rule: PostingRule, date: Date): void {
+  addPostingRule<TEvent extends AccountingEvent>(
+    eventType: EventType,
+    rule: PostingRule<TEvent>,
+    date: Date,
+  ): void {
     if (!this.#postingRules.has(eventType)) {
       this.#postingRules.set(
         eventType,
-        new SingleTemporalCollection<PostingRule>(),
+        new SingleTemporalCollection<PostingRule<TEvent>>(),
       );
     }
 
     this.#temporalCollection(eventType).put(date, rule);
   }
 
-  getPostingRule(eventType: EventType, date: Date): PostingRule | undefined {
+  getPostingRule<TEvent extends AccountingEvent>(
+    eventType: EventType,
+    date: Date,
+  ): PostingRule<TEvent> | undefined {
     return this.#temporalCollection(eventType).get(date);
   }
 
-  #temporalCollection(
+  #temporalCollection<TEvent extends AccountingEvent>(
     eventType: EventType,
-  ): SingleTemporalCollection<PostingRule> {
+  ): SingleTemporalCollection<PostingRule<TEvent>> {
     const result = this.#postingRules.get(eventType);
 
     if (!result) {

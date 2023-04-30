@@ -45,7 +45,7 @@ class AccountingEvent {
     this.#findRule().process(this);
   }
 
-  #findRule(): PostingRule {
+  #findRule(): PostingRule<AccountingEvent> {
     const rule = this.customer.serviceAgreement.getPostingRule(
       this.type,
       this.whenOccured,

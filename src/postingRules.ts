@@ -7,14 +7,14 @@ import {
 } from "./events.ts";
 import { type Money } from "./money.ts";
 
-abstract class PostingRule {
+abstract class PostingRule<TEvent extends AccountingEvent> {
   protected type: EntryType;
 
   constructor(type: EntryType) {
     this.type = type;
   }
 
-  process(event: AccountingEvent): void {
+  process(event: TEvent): void {
     const amount = this.calculateAmount(event);
 
     this.#makeEntry(event, amount);
@@ -24,7 +24,7 @@ abstract class PostingRule {
     }
   }
 
-  #makeEntry(event: AccountingEvent, amount: Money): void {
+  #makeEntry(event: TEvent, amount: Money): void {
     const newEntry = {
       amount: amount,
       date: event.whenNoticed,
@@ -39,24 +39,20 @@ abstract class PostingRule {
     return this.type !== "Tax";
   }
 
-  protected abstract calculateAmount(event: AccountingEvent): Money;
+  protected abstract calculateAmount(event: TEvent): Money;
 }
 
-class MultiplyByRatePostingRule extends PostingRule {
+class MultiplyByRatePostingRule extends PostingRule<UsageAccountingEvent> {
   constructor(type: EntryType) {
     super(type);
   }
 
-  protected calculateAmount(event: AccountingEvent): Money {
-    if (event instanceof UsageAccountingEvent) {
-      return event.amount.multiply(event.rate);
-    }
-
-    throw new Error("Cannot calculate amount for this type of event");
+  protected calculateAmount(event: UsageAccountingEvent): Money {
+    return event.amount.multiply(event.rate);
   }
 }
 
-class AmmountFormulaPostingRule extends PostingRule {
+class AmmountFormulaPostingRule extends PostingRule<MonetaryEvent> {
   constructor(
     private multiplier: number,
     private fixedFee: Money,
@@ -65,16 +61,12 @@ class AmmountFormulaPostingRule extends PostingRule {
     super(type);
   }
 
-  protected calculateAmount(event: AccountingEvent): Money {
-    if (event instanceof MonetaryEvent) {
-      return event.amount.multiply(this.multiplier).add(this.fixedFee);
-    }
-
-    throw new Error("Cannot calculate amount for this type of event");
+  protected calculateAmount(event: MonetaryEvent): Money {
+    return event.amount.multiply(this.multiplier).add(this.fixedFee);
   }
 }
 
-class PoolCapPostingRule extends PostingRule {
+class PoolCapPostingRule extends PostingRule<UsageAccountingEvent> {
   constructor(
     private rate: number,
     private usageLimit: number,
@@ -83,15 +75,9 @@ class PoolCapPostingRule extends PostingRule {
     super(type);
   }
 
-  protected calculateAmount(event: AccountingEvent): Money {
-    if (event instanceof UsageAccountingEvent) {
-      const rate = event.amount.value > this.usageLimit
-        ? event.rate
-        : this.rate;
-      return event.amount.multiply(rate);
-    }
-
-    throw new Error("Cannot calculate amount for this type of event");
+  protected calculateAmount(event: UsageAccountingEvent): Money {
+    const rate = event.amount.value > this.usageLimit ? event.rate : this.rate;
+    return event.amount.multiply(rate);
   }
 }
 
