@@ -87,8 +87,6 @@ class MonetaryEvent extends AccountingEvent {
 }
 
 class TaxEvent extends MonetaryEvent {
-  #baseEvent: AccountingEvent;
-
   constructor(baseEvent: AccountingEvent, taxableAmount: Money) {
     super(
       taxableAmount,
@@ -102,7 +100,6 @@ class TaxEvent extends MonetaryEvent {
       throw new Error("Probable endless recursion");
     }
 
-    this.#baseEvent = baseEvent;
     baseEvent.addSecondaryEvent(this);
   }
 }
