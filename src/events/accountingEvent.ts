@@ -2,18 +2,26 @@ import { type Customer } from "../customer.ts";
 import { type Entry } from "../entry.ts";
 import { PostingRule } from "../postingRules.ts";
 
-type EventType = "Usage" | "ServiceCall" | "Tax";
+type EventType = "Usage" | "ServiceCall" | "Tax" | "Adjustment";
 
 class AccountingEvent {
   readonly #resultingEntries: Entry[] = [];
   readonly #secondaryEvents: AccountingEvent[] = [];
+  #isProcessed = false;
+  #adjustedEvent: AccountingEvent | undefined;
+  #replacementEvent: AccountingEvent | null = null;
 
   constructor(
     readonly type: EventType,
     readonly whenOccured: Date,
     readonly whenNoticed: Date,
     readonly customer: Customer,
+    readonly adjustedEvent?: AccountingEvent,
   ) {
+    if (adjustedEvent) {
+      this.#adjustedEvent = adjustedEvent;
+      adjustedEvent.#replacementEvent = this;
+    }
   }
 
   getResultingEntries(): Entry[] {
@@ -41,7 +49,33 @@ class AccountingEvent {
   }
 
   process(): void {
+    if (this.#isProcessed) {
+      throw new Error("Cannot process an event twice");
+    }
+
+    if (this.#adjustedEvent) {
+      this.#adjustedEvent.reverse();
+    }
+
     this.#findRule().process(this);
+    this.#isProcessed = true;
+  }
+
+  reverse(): void {
+    for (const entry of this.getResultingEntries()) {
+      const reversingEntry = {
+        amount: entry.amount.negate(),
+        date: entry.date,
+        type: entry.type,
+      };
+
+      this.customer.addEntry(reversingEntry);
+      this.addResultingEntry(reversingEntry);
+    }
+
+    for (const event of this.#secondaryEvents) {
+      event.reverse();
+    }
   }
 
   #findRule(): PostingRule<AccountingEvent> {
@@ -55,6 +89,10 @@ class AccountingEvent {
     }
 
     return rule;
+  }
+
+  protected hasBeenAdjusted(): boolean {
+    return this.#replacementEvent ? true : false;
   }
 }
 

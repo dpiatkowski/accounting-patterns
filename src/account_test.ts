@@ -39,7 +39,7 @@ Deno.test("Account with entry history", () => {
   const midpoint = new Date();
   const midpointRange = new DateRange(beginning, midpoint);
 
-  assert(account.balance(new Date()).equals(new Money(30, currency)));
+  assert(account.balance(midpointRange).equals(new Money(30, currency)));
   assert(account.deposits(midpointRange).equals(new Money(30, currency)));
   assert(account.withdrawals(midpointRange).equals(Money.zero(currency)));
 
