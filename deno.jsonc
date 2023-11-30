@@ -1,6 +1,6 @@
 {
   "imports": {
-    "testing/": "https://deno.land/std@0.177.0/testing/"
+    "assert/": "https://deno.land/std@0.207.0/assert/"
   },
   "tasks": {
     "dev": "deno run --watch main.ts"

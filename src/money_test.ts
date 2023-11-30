@@ -1,9 +1,4 @@
-import {
-  assert,
-  assertEquals,
-  assertFalse,
-  assertThrows,
-} from "testing/asserts.ts";
+import { assert, assertEquals, assertFalse, assertThrows } from "assert/mod.ts";
 import { InvalidCurrencyError, Money } from "./money.ts";
 
 Deno.test("Equality of two Money objects", () => {
@@ -43,5 +38,5 @@ Deno.test("Multiply Money object", () => {
   const money = new Money(10, currency);
 
   assert(money.multiply(2).equals(new Money(20, currency)));
-  assert(money.multiply(.5).equals(new Money(5, currency)));
+  assert(money.multiply(0.5).equals(new Money(5, currency)));
 });

@@ -1,8 +1,4 @@
-import {
-  assertArrayIncludes,
-  assertEquals,
-  assertExists,
-} from "testing/asserts.ts";
+import { assertArrayIncludes, assertEquals, assertExists } from "assert/mod.ts";
 import { Customer } from "./customer.ts";
 import { Entry, EntryType } from "./entry.ts";
 import { MonetaryEvent, UsageAccountingEvent } from "./events/mod.ts";
@@ -21,12 +17,12 @@ Deno.test("Multiply by rate posting rule", () => {
   serviceAgreement.addPostingRule(
     "Usage",
     new MultiplyByRatePostingRule("BaseUsage"),
-    new Date(2023, 3, 1),
+    new Date(2023, 3, 1)
   );
   serviceAgreement.addPostingRule(
     "Tax",
-    new AmmountFormulaPostingRule(.055, Money.zero(currency), "Tax"),
-    new Date(2023, 3, 1),
+    new AmmountFormulaPostingRule(0.055, Money.zero(currency), "Tax"),
+    new Date(2023, 3, 1)
   );
 
   const customer = new Customer("WPH", serviceAgreement);
@@ -35,7 +31,7 @@ Deno.test("Multiply by rate posting rule", () => {
     new Money(50, currency),
     new Date(2023, 3, 1),
     new Date(2023, 3, 1),
-    customer,
+    customer
   );
 
   event.process();
@@ -54,17 +50,17 @@ Deno.test("Amount formula posting rule", () => {
   serviceAgreement.addPostingRule(
     "Usage",
     new MultiplyByRatePostingRule("BaseUsage"),
-    new Date(2023, 3, 1),
+    new Date(2023, 3, 1)
   );
   serviceAgreement.addPostingRule(
     "ServiceCall",
-    new AmmountFormulaPostingRule(.5, new Money(10, currency), "ServiceFee"),
-    new Date(2023, 3, 1),
+    new AmmountFormulaPostingRule(0.5, new Money(10, currency), "ServiceFee"),
+    new Date(2023, 3, 1)
   );
   serviceAgreement.addPostingRule(
     "Tax",
-    new AmmountFormulaPostingRule(.055, Money.zero(currency), "Tax"),
-    new Date(2023, 3, 1),
+    new AmmountFormulaPostingRule(0.055, Money.zero(currency), "Tax"),
+    new Date(2023, 3, 1)
   );
 
   const customer = new Customer("WPH", serviceAgreement);
@@ -74,7 +70,7 @@ Deno.test("Amount formula posting rule", () => {
     "ServiceCall",
     new Date(2023, 3, 1),
     new Date(2023, 3, 1),
-    customer,
+    customer
   );
 
   event.process();
@@ -90,22 +86,22 @@ Deno.test("Amount formula posting rule with a change", () => {
   serviceAgreement.addPostingRule(
     "Usage",
     new MultiplyByRatePostingRule("BaseUsage"),
-    new Date(2023, 3, 1),
+    new Date(2023, 3, 1)
   );
   serviceAgreement.addPostingRule(
     "ServiceCall",
-    new AmmountFormulaPostingRule(.5, new Money(10, currency), "ServiceFee"),
-    new Date(2023, 1, 1),
+    new AmmountFormulaPostingRule(0.5, new Money(10, currency), "ServiceFee"),
+    new Date(2023, 1, 1)
   );
   serviceAgreement.addPostingRule(
     "ServiceCall",
-    new AmmountFormulaPostingRule(.5, new Money(15, currency), "ServiceFee"),
-    new Date(2023, 2, 1),
+    new AmmountFormulaPostingRule(0.5, new Money(15, currency), "ServiceFee"),
+    new Date(2023, 2, 1)
   );
   serviceAgreement.addPostingRule(
     "Tax",
-    new AmmountFormulaPostingRule(.055, Money.zero(currency), "Tax"),
-    new Date(2023, 3, 1),
+    new AmmountFormulaPostingRule(0.055, Money.zero(currency), "Tax"),
+    new Date(2023, 3, 1)
   );
 
   const customer = new Customer("WPH", serviceAgreement);
@@ -115,7 +111,7 @@ Deno.test("Amount formula posting rule with a change", () => {
     "ServiceCall",
     new Date(2023, 3, 1),
     new Date(2023, 3, 1),
-    customer,
+    customer
   );
 
   event.process();
@@ -129,17 +125,17 @@ Deno.test("Amount formula posting rule with service agreement change", () => {
   serviceAgreement.addPostingRule(
     "Usage",
     new PoolCapPostingRule(5, 50, "BaseUsage"),
-    new Date(2023, 3, 1),
+    new Date(2023, 3, 1)
   );
   serviceAgreement.addPostingRule(
     "ServiceCall",
-    new AmmountFormulaPostingRule(.5, new Money(10, currency), "ServiceFee"),
-    new Date(2023, 3, 1),
+    new AmmountFormulaPostingRule(0.5, new Money(10, currency), "ServiceFee"),
+    new Date(2023, 3, 1)
   );
   serviceAgreement.addPostingRule(
     "Tax",
-    new AmmountFormulaPostingRule(.055, Money.zero(currency), "Tax"),
-    new Date(2023, 3, 1),
+    new AmmountFormulaPostingRule(0.055, Money.zero(currency), "Tax"),
+    new Date(2023, 3, 1)
   );
 
   const customer = new Customer("WPH", serviceAgreement);
@@ -148,7 +144,7 @@ Deno.test("Amount formula posting rule with service agreement change", () => {
     new Money(50, currency),
     new Date(2023, 3, 1),
     new Date(2023, 3, 1),
-    customer,
+    customer
   );
 
   usage.process();
@@ -157,17 +153,13 @@ Deno.test("Amount formula posting rule with service agreement change", () => {
     new Money(51, currency),
     new Date(2023, 3, 1),
     new Date(2023, 3, 1),
-    customer,
+    customer
   );
 
   usage2.process();
 
-  const [
-    baseUsageEntry,
-    taxEntry,
-    baseUsageEntry2,
-    taxEntry2,
-  ] = customer.getEntries();
+  const [baseUsageEntry, taxEntry, baseUsageEntry2, taxEntry2] =
+    customer.getEntries();
 
   assertEntry(baseUsageEntry, "BaseUsage", 250);
   assertEntry(taxEntry, "Tax", 13.75);
@@ -178,7 +170,7 @@ Deno.test("Amount formula posting rule with service agreement change", () => {
 function assertEntry(
   entry: Entry | undefined,
   type: EntryType,
-  amount: number,
+  amount: number
 ): void {
   assertExists(entry);
   assertEquals(entry.type, type);

@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "testing/asserts.ts";
+import { assertEquals, assertThrows } from "assert/mod.ts";
 import { DateRange } from "./dateRange.ts";
 
 Deno.test("Point in time is valid", () => {
