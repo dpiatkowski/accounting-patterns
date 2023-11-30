@@ -11,18 +11,17 @@ class ServiceAgreement {
     SingleTemporalCollection<PostingRule<AccountingEvent>>
   >();
 
-  constructor(readonly rate: number) {
-  }
+  constructor(readonly rate: number) {}
 
   addPostingRule<TEvent extends AccountingEvent>(
     eventType: EventType,
     rule: PostingRule<TEvent>,
-    date: Date,
+    date: Date
   ): void {
     if (!this.#postingRules.has(eventType)) {
       this.#postingRules.set(
         eventType,
-        new SingleTemporalCollection<PostingRule<TEvent>>(),
+        new SingleTemporalCollection<PostingRule<TEvent>>()
       );
     }
 
@@ -31,13 +30,13 @@ class ServiceAgreement {
 
   getPostingRule<TEvent extends AccountingEvent>(
     eventType: EventType,
-    date: Date,
+    date: Date
   ): PostingRule<TEvent> | undefined {
     return this.#temporalCollection(eventType).get(date);
   }
 
   #temporalCollection<TEvent extends AccountingEvent>(
-    eventType: EventType,
+    eventType: EventType
   ): SingleTemporalCollection<PostingRule<TEvent>> {
     const result = this.#postingRules.get(eventType);
 

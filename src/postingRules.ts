@@ -56,7 +56,7 @@ class AmmountFormulaPostingRule extends PostingRule<MonetaryEvent> {
   constructor(
     private multiplier: number,
     private fixedFee: Money,
-    type: EntryType,
+    type: EntryType
   ) {
     super(type);
   }
@@ -70,7 +70,7 @@ class PoolCapPostingRule extends PostingRule<UsageAccountingEvent> {
   constructor(
     private rate: number,
     private usageLimit: number,
-    type: EntryType,
+    type: EntryType
   ) {
     super(type);
   }

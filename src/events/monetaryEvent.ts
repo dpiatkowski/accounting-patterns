@@ -8,7 +8,7 @@ class MonetaryEvent extends AccountingEvent {
     readonly type: EventType,
     readonly whenOccured: Date,
     readonly whenNoticed: Date,
-    readonly customer: Customer,
+    readonly customer: Customer
   ) {
     super(type, whenOccured, whenNoticed, customer);
   }

@@ -6,9 +6,8 @@ class AccountingEntry {
     readonly amount: Money,
     readonly date: Date,
     readonly account: Account,
-    readonly transaction: AccountingTransaction,
-  ) {
-  }
+    readonly transaction: AccountingTransaction
+  ) {}
 
   post(): void {
     this.account.addEntry(this);
@@ -29,9 +28,7 @@ class AccountingTransaction {
       throw new ImmutableTransactionError();
     }
 
-    this.#entries.push(
-      new AccountingEntry(amount, this.#date, account, this),
-    );
+    this.#entries.push(new AccountingEntry(amount, this.#date, account, this));
   }
 
   post(): void {

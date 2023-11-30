@@ -1,8 +1,7 @@
 type Currency = "PLN" | "EUR" | "USD";
 
 class Money {
-  constructor(readonly value: number, readonly currency: Currency) {
-  }
+  constructor(readonly value: number, readonly currency: Currency) {}
 
   static zero(currency: Currency): Money {
     return new Money(0, currency);

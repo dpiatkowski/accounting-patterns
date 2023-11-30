@@ -6,9 +6,8 @@ class Customer {
 
   constructor(
     readonly name: string,
-    readonly serviceAgreement: ServiceAgreement,
-  ) {
-  }
+    readonly serviceAgreement: ServiceAgreement
+  ) {}
 
   addEntry(entry: Entry) {
     this.#entries.push(entry);

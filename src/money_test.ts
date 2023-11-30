@@ -1,10 +1,10 @@
-import { InvalidCurrencyError, Money } from "./money.ts";
 import {
   assert,
   assertEquals,
   assertFalse,
   assertThrows,
 } from "testing/asserts.ts";
+import { InvalidCurrencyError, Money } from "./money.ts";
 
 Deno.test("Equality of two Money objects", () => {
   assert(new Money(10, "PLN").equals(new Money(10, "PLN")));
