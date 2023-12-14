@@ -16,7 +16,7 @@ class AccountingEvent {
     readonly whenOccured: Date,
     readonly whenNoticed: Date,
     readonly customer: Customer,
-    readonly adjustedEvent?: AccountingEvent
+    readonly adjustedEvent?: AccountingEvent,
   ) {
     if (adjustedEvent) {
       this.#adjustedEvent = adjustedEvent;
@@ -81,7 +81,7 @@ class AccountingEvent {
   #findRule(): PostingRule<AccountingEvent> {
     const rule = this.customer.serviceAgreement.getPostingRule(
       this.type,
-      this.whenOccured
+      this.whenOccured,
     );
 
     if (!rule) {

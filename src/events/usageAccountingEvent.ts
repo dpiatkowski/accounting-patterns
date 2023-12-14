@@ -7,7 +7,7 @@ class UsageAccountingEvent extends AccountingEvent {
     readonly amount: Money,
     readonly whenOccured: Date,
     readonly whenNoticed: Date,
-    readonly customer: Customer
+    readonly customer: Customer,
   ) {
     super("Usage", whenOccured, whenNoticed, customer);
   }

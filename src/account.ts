@@ -1,6 +1,6 @@
 import { AccountingTransaction } from "./accountingTransactions.ts";
 import { DateRange } from "./dateRange.ts";
-import { Money, type Currency } from "./money.ts";
+import { type Currency, Money } from "./money.ts";
 
 type AccountEntry = {
   amount: Money;
@@ -46,7 +46,7 @@ class Account {
     if (dateorDateRange instanceof Date) {
       return this.#calculateValueFromEntries(
         new DateRange(new Date(), dateorDateRange),
-        (_) => true
+        (_) => true,
       );
     }
 
@@ -56,20 +56,20 @@ class Account {
   deposits(dateRange: DateRange): Money {
     return this.#calculateValueFromEntries(
       dateRange,
-      (entry) => entry.amount.value > 0
+      (entry) => entry.amount.value > 0,
     );
   }
 
   withdrawals(dateRange: DateRange): Money {
     return this.#calculateValueFromEntries(
       dateRange,
-      (entry) => entry.amount.value < 0
+      (entry) => entry.amount.value < 0,
     );
   }
 
   #calculateValueFromEntries(
     dateRange: DateRange,
-    entryPredicate: (entry: AccountEntry) => boolean
+    entryPredicate: (entry: AccountEntry) => boolean,
   ): Money {
     let result = Money.zero("PLN");
 
@@ -83,4 +83,4 @@ class Account {
   }
 }
 
-export { Account, deposit, withdrawal, type AccountEntry };
+export { Account, type AccountEntry, deposit, withdrawal };

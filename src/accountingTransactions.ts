@@ -6,7 +6,7 @@ class AccountingEntry {
     readonly amount: Money,
     readonly date: Date,
     readonly account: Account,
-    readonly transaction: AccountingTransaction
+    readonly transaction: AccountingTransaction,
   ) {}
 
   post(): void {

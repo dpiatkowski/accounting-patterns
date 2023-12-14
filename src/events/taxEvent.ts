@@ -8,7 +8,7 @@ class TaxEvent extends MonetaryEvent {
       "Tax",
       baseEvent.whenOccured,
       baseEvent.whenNoticed,
-      baseEvent.customer
+      baseEvent.customer,
     );
 
     if (baseEvent.type == this.type) {
