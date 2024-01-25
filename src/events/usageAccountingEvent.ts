@@ -5,8 +5,8 @@ import { AccountingEvent } from "./mod.ts";
 class UsageAccountingEvent extends AccountingEvent {
   constructor(
     readonly amount: Money,
-    readonly whenOccured: Date,
-    readonly whenNoticed: Date,
+    readonly whenOccured: Temporal.Instant,
+    readonly whenNoticed: Temporal.Instant,
     readonly customer: Customer,
   ) {
     super("Usage", whenOccured, whenNoticed, customer);

@@ -16,7 +16,7 @@ class ServiceAgreement {
   addPostingRule<TEvent extends AccountingEvent>(
     eventType: EventType,
     rule: PostingRule<TEvent>,
-    date: Date,
+    date: Temporal.Instant,
   ): void {
     if (!this.#postingRules.has(eventType)) {
       this.#postingRules.set(
@@ -30,7 +30,7 @@ class ServiceAgreement {
 
   getPostingRule<TEvent extends AccountingEvent>(
     eventType: EventType,
-    date: Date,
+    date: Temporal.Instant,
   ): PostingRule<TEvent> | undefined {
     return this.#temporalCollection(eventType).get(date);
   }

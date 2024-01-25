@@ -6,8 +6,8 @@ class MonetaryEvent extends AccountingEvent {
   constructor(
     readonly amount: Money,
     readonly type: EventType,
-    readonly whenOccured: Date,
-    readonly whenNoticed: Date,
+    readonly whenOccured: Temporal.Instant,
+    readonly whenNoticed: Temporal.Instant,
     readonly customer: Customer,
   ) {
     super(type, whenOccured, whenNoticed, customer);

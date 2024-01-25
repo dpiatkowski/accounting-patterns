@@ -17,20 +17,20 @@ Deno.test("Multiply by rate posting rule", () => {
   serviceAgreement.addPostingRule(
     "Usage",
     new MultiplyByRatePostingRule("BaseUsage"),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
   );
   serviceAgreement.addPostingRule(
     "Tax",
     new AmmountFormulaPostingRule(0.055, Money.zero(currency), "Tax"),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
   );
 
   const customer = new Customer("WPH", serviceAgreement);
 
   const event = new UsageAccountingEvent(
     new Money(50, currency),
-    new Date(2023, 3, 1),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
     customer,
   );
 
@@ -50,17 +50,17 @@ Deno.test("Amount formula posting rule", () => {
   serviceAgreement.addPostingRule(
     "Usage",
     new MultiplyByRatePostingRule("BaseUsage"),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
   );
   serviceAgreement.addPostingRule(
     "ServiceCall",
     new AmmountFormulaPostingRule(0.5, new Money(10, currency), "ServiceFee"),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
   );
   serviceAgreement.addPostingRule(
     "Tax",
     new AmmountFormulaPostingRule(0.055, Money.zero(currency), "Tax"),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
   );
 
   const customer = new Customer("WPH", serviceAgreement);
@@ -68,8 +68,8 @@ Deno.test("Amount formula posting rule", () => {
   const event = new MonetaryEvent(
     new Money(40, currency),
     "ServiceCall",
-    new Date(2023, 3, 1),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
     customer,
   );
 
@@ -86,22 +86,22 @@ Deno.test("Amount formula posting rule with a change", () => {
   serviceAgreement.addPostingRule(
     "Usage",
     new MultiplyByRatePostingRule("BaseUsage"),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
   );
   serviceAgreement.addPostingRule(
     "ServiceCall",
     new AmmountFormulaPostingRule(0.5, new Money(10, currency), "ServiceFee"),
-    new Date(2023, 1, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
   );
   serviceAgreement.addPostingRule(
     "ServiceCall",
     new AmmountFormulaPostingRule(0.5, new Money(15, currency), "ServiceFee"),
-    new Date(2023, 2, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
   );
   serviceAgreement.addPostingRule(
     "Tax",
     new AmmountFormulaPostingRule(0.055, Money.zero(currency), "Tax"),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
   );
 
   const customer = new Customer("WPH", serviceAgreement);
@@ -109,8 +109,8 @@ Deno.test("Amount formula posting rule with a change", () => {
   const event = new MonetaryEvent(
     new Money(40, currency),
     "ServiceCall",
-    new Date(2023, 3, 1),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
     customer,
   );
 
@@ -125,25 +125,25 @@ Deno.test("Amount formula posting rule with service agreement change", () => {
   serviceAgreement.addPostingRule(
     "Usage",
     new PoolCapPostingRule(5, 50, "BaseUsage"),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
   );
   serviceAgreement.addPostingRule(
     "ServiceCall",
     new AmmountFormulaPostingRule(0.5, new Money(10, currency), "ServiceFee"),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
   );
   serviceAgreement.addPostingRule(
     "Tax",
     new AmmountFormulaPostingRule(0.055, Money.zero(currency), "Tax"),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
   );
 
   const customer = new Customer("WPH", serviceAgreement);
 
   const usage = new UsageAccountingEvent(
     new Money(50, currency),
-    new Date(2023, 3, 1),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
     customer,
   );
 
@@ -151,8 +151,8 @@ Deno.test("Amount formula posting rule with service agreement change", () => {
 
   const usage2 = new UsageAccountingEvent(
     new Money(51, currency),
-    new Date(2023, 3, 1),
-    new Date(2023, 3, 1),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
+    Temporal.Instant.from("2023-04-01T01:00:00Z"),
     customer,
   );
 

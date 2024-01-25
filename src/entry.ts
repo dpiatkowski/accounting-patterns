@@ -4,7 +4,7 @@ type EntryType = "BaseUsage" | "ServiceFee" | "Tax";
 
 type Entry = Readonly<{
   amount: Money;
-  date: Date;
+  date: Temporal.Instant;
   type: EntryType;
 }>;
 

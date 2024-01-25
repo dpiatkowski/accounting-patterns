@@ -4,25 +4,43 @@ import { SingleTemporalCollection } from "./temporalCollection.ts";
 Deno.test("Empty SingleTemporalCollection", () => {
   const collection = new SingleTemporalCollection<string>();
 
-  assertEquals(collection.get(new Date(2023, 5, 2)), undefined);
+  assertEquals(
+    collection.get(Temporal.Instant.from("2023-04-02T01:00:00Z")),
+    undefined,
+  );
 });
 
 Deno.test("Single entry in SingleTemporalCollection", () => {
   const collection = new SingleTemporalCollection<string>();
 
-  collection.put(new Date(2023, 5, 3), "CPC");
+  collection.put(Temporal.Instant.from("2023-04-03T01:00:00Z"), "CPC");
 
-  assertEquals(collection.get(new Date(2023, 5, 2)), undefined);
-  assertEquals(collection.get(new Date(2023, 5, 3)), "CPC");
-  assertEquals(collection.get(new Date(2023, 5, 4)), "CPC");
+  assertEquals(
+    collection.get(Temporal.Instant.from("2023-04-02T01:00:00Z")),
+    undefined,
+  );
+  assertEquals(
+    collection.get(Temporal.Instant.from("2023-04-03T01:00:00Z")),
+    "CPC",
+  );
+  assertEquals(
+    collection.get(Temporal.Instant.from("2023-04-04T01:00:00Z")),
+    "CPC",
+  );
 });
 
 Deno.test("Multiple entries in SingleTemporalCollection", () => {
   const collection = new SingleTemporalCollection<string>();
 
-  collection.put(new Date(2022, 0, 1), "CPS");
-  collection.put(new Date(2023, 5, 1), "CPC");
+  collection.put(Temporal.Instant.from("2023-01-01T01:00:00Z"), "CPS");
+  collection.put(Temporal.Instant.from("2023-04-01T01:00:00Z"), "CPC");
 
-  assertEquals(collection.get(new Date(2023, 0, 1)), "CPS");
-  assertEquals(collection.get(new Date(2023, 5, 4)), "CPC");
+  assertEquals(
+    collection.get(Temporal.Instant.from("2023-01-02T01:00:00Z")),
+    "CPS",
+  );
+  assertEquals(
+    collection.get(Temporal.Instant.from("2023-04-04T01:00:00Z")),
+    "CPC",
+  );
 });
