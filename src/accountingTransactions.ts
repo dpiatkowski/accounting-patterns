@@ -4,7 +4,7 @@ import { Money } from "./money.ts";
 class AccountingEntry {
   constructor(
     readonly amount: Money,
-    readonly date: Date,
+    readonly date: Temporal.Instant,
     readonly account: Account,
     readonly transaction: AccountingTransaction,
   ) {}
@@ -15,11 +15,11 @@ class AccountingEntry {
 }
 
 class AccountingTransaction {
-  readonly #date: Date;
+  readonly #date: Temporal.Instant;
   readonly #entries: AccountingEntry[] = [];
   #wasPosted = false;
 
-  constructor(date: Date) {
+  constructor(date: Temporal.Instant) {
     this.#date = date;
   }
 

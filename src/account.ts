@@ -4,17 +4,17 @@ import { type Currency, Money } from "./money.ts";
 
 type AccountEntry = {
   amount: Money;
-  date: Date;
+  date: Temporal.Instant;
 };
 
-function deposit(amount: Money, date: Date): AccountEntry {
+function deposit(amount: Money, date: Temporal.Instant): AccountEntry {
   return {
     amount,
     date,
   };
 }
 
-function withdrawal(amount: Money, date: Date): AccountEntry {
+function withdrawal(amount: Money, date: Temporal.Instant): AccountEntry {
   return {
     amount: amount.negate(),
     date,
@@ -35,17 +35,18 @@ class Account {
     this.#entries.push(entry);
   }
 
-  withdraw(amount: Money, target: Account, date: Date): void {
+  withdraw(amount: Money, target: Account, date: Temporal.Instant): void {
     const transaction = new AccountingTransaction(date);
     transaction.add(amount.negate(), this);
     transaction.add(amount, target);
     transaction.post();
   }
 
-  balance(dateorDateRange: Date | DateRange): Money {
-    if (dateorDateRange instanceof Date) {
+  // TODO: is Temporal case even necessary?
+  balance(dateorDateRange: Temporal.Instant | DateRange): Money {
+    if (dateorDateRange instanceof Temporal.Instant) {
       return this.#calculateValueFromEntries(
-        new DateRange(new Date(), dateorDateRange),
+        new DateRange(dateorDateRange, dateorDateRange),
         (_) => true,
       );
     }
