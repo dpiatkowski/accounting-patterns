@@ -20,10 +20,10 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@9db7f66e8e16b5699a514448ce994936c63f0d54
         with:
-          deno-version: v1.x
+          deno-version: vx.x.x
 
       - name: Run linter
         run: deno lint
 
       - name: Run tests
-        run: deno test -A --unstable
+        run: deno test -A --unstable-temporal
