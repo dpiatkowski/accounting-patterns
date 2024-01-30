@@ -1,12 +1,12 @@
-import { assert, assertThrows } from "assert/mod.ts";
+import { assertThrows } from "assert/mod.ts";
 import { Customer } from "./customer.ts";
 import { TaxEvent, UsageAccountingEvent } from "./events.ts";
 import { Money } from "./money.ts";
-import { ServiceAgreement } from "./serviceAgreement.ts";
 import {
   AmmountFormulaPostingRule,
   MultiplyByRatePostingRule,
 } from "./postingRules.ts";
+import { ServiceAgreement } from "./serviceAgreement.ts";
 
 Deno.test("Cannot taxate tax event", () => {
   const currency = "PLN";
