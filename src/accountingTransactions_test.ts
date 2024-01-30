@@ -10,6 +10,17 @@ import { Money } from "./money.ts";
 
 const currency = "PLN";
 
+Deno.test("Posting unbalanced transaction fails", () => {
+  const account = new Account(currency);
+
+  const transaction = new AccountingTransaction(Temporal.Now.instant());
+  transaction.add(new Money(500, currency), account);
+
+  assertThrows(() => {
+    transaction.post();
+  }, UnableToPostTransactionError);
+});
+
 Deno.test("Multi-legged transaction between 3 accounts", () => {
   const revenue = new Account(currency);
   const recivables = new Account(currency);

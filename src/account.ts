@@ -42,16 +42,8 @@ class Account {
     transaction.post();
   }
 
-  // TODO: is Temporal case even necessary?
-  balance(dateorDateRange: Temporal.Instant | DateRange): Money {
-    if (dateorDateRange instanceof Temporal.Instant) {
-      return this.#calculateValueFromEntries(
-        new DateRange(dateorDateRange, dateorDateRange),
-        (_) => true,
-      );
-    }
-
-    return this.#calculateValueFromEntries(dateorDateRange, (_) => true);
+  balance(dateRange: DateRange): Money {
+    return this.#calculateValueFromEntries(dateRange, (_) => true);
   }
 
   deposits(dateRange: DateRange): Money {

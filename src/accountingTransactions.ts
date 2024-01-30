@@ -32,7 +32,7 @@ class AccountingTransaction {
   }
 
   post(): void {
-    if (!this.canPost()) {
+    if (!this.#canPost()) {
       throw new UnableToPostTransactionError();
     }
 
@@ -43,7 +43,7 @@ class AccountingTransaction {
     this.#wasPosted = true;
   }
 
-  canPost(): boolean {
+  #canPost(): boolean {
     return this.#wasPosted == false && this.#balance() == 0;
   }
 

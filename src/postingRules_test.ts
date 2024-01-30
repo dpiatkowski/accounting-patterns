@@ -1,4 +1,9 @@
-import { assertArrayIncludes, assertEquals, assertExists } from "assert/mod.ts";
+import {
+  assertArrayIncludes,
+  assertEquals,
+  assertExists,
+  assertThrows,
+} from "assert/mod.ts";
 import { Customer } from "./customer.ts";
 import { Entry, EntryType } from "./entry.ts";
 import { MonetaryEvent, UsageAccountingEvent } from "./events/mod.ts";
@@ -11,6 +16,17 @@ import {
 import { ServiceAgreement } from "./serviceAgreement.ts";
 
 const currency = "PLN";
+
+Deno.test("Missing rule at given date", () => {
+  const serviceAgreement = new ServiceAgreement(420);
+
+  assertThrows(() => {
+    serviceAgreement.getPostingRule(
+      "Usage",
+      Temporal.Instant.from("2023-04-01T01:00:00Z"),
+    );
+  });
+});
 
 Deno.test("Multiply by rate posting rule", () => {
   const serviceAgreement = new ServiceAgreement(10);
