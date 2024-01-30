@@ -1,6 +1,7 @@
-import { type Customer } from "../customer.ts";
-import { type Entry } from "../entry.ts";
-import { PostingRule } from "../postingRules.ts";
+import { Customer } from "./customer.ts";
+import { Entry } from "./entry.ts";
+import { Money } from "./money.ts";
+import { PostingRule } from "./postingRules.ts";
 
 type EventType = "Usage" | "ServiceCall" | "Tax" | "Adjustment";
 
@@ -96,4 +97,55 @@ class AccountingEvent {
   }
 }
 
-export { AccountingEvent, type EventType };
+class MonetaryEvent extends AccountingEvent {
+  constructor(
+    readonly amount: Money,
+    readonly type: EventType,
+    readonly whenOccured: Temporal.Instant,
+    readonly whenNoticed: Temporal.Instant,
+    readonly customer: Customer,
+  ) {
+    super(type, whenOccured, whenNoticed, customer);
+  }
+}
+
+class TaxEvent extends MonetaryEvent {
+  constructor(baseEvent: AccountingEvent, taxableAmount: Money) {
+    super(
+      taxableAmount,
+      "Tax",
+      baseEvent.whenOccured,
+      baseEvent.whenNoticed,
+      baseEvent.customer,
+    );
+
+    if (baseEvent.type == this.type) {
+      throw new Error("Probable endless recursion");
+    }
+
+    baseEvent.addSecondaryEvent(this);
+  }
+}
+
+class UsageAccountingEvent extends AccountingEvent {
+  constructor(
+    readonly amount: Money,
+    readonly whenOccured: Temporal.Instant,
+    readonly whenNoticed: Temporal.Instant,
+    readonly customer: Customer,
+  ) {
+    super("Usage", whenOccured, whenNoticed, customer);
+  }
+
+  get rate(): number {
+    return this.customer.serviceAgreement.rate;
+  }
+}
+
+export {
+  AccountingEvent,
+  type EventType,
+  MonetaryEvent,
+  TaxEvent,
+  UsageAccountingEvent,
+};

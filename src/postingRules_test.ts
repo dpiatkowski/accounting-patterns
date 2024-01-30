@@ -6,7 +6,7 @@ import {
 } from "assert/mod.ts";
 import { Customer } from "./customer.ts";
 import { Entry, EntryType } from "./entry.ts";
-import { MonetaryEvent, UsageAccountingEvent } from "./events/mod.ts";
+import { MonetaryEvent, UsageAccountingEvent } from "./events.ts";
 import { Money } from "./money.ts";
 import {
   AmmountFormulaPostingRule,

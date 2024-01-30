@@ -4,7 +4,7 @@ import {
   MonetaryEvent,
   TaxEvent,
   UsageAccountingEvent,
-} from "./events/mod.ts";
+} from "./events.ts";
 import { type Money } from "./money.ts";
 
 abstract class PostingRule<TEvent extends AccountingEvent> {
