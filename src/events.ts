@@ -55,14 +55,14 @@ class AccountingEvent {
     }
 
     if (this.#adjustedEvent) {
-      this.#adjustedEvent.reverse();
+      this.#adjustedEvent.#reverse();
     }
 
     this.#findRule().process(this);
     this.#isProcessed = true;
   }
 
-  reverse(): void {
+  #reverse(): void {
     for (const entry of this.getResultingEntries()) {
       const reversingEntry = {
         amount: entry.amount.negate(),
@@ -75,7 +75,7 @@ class AccountingEvent {
     }
 
     for (const event of this.#secondaryEvents) {
-      event.reverse();
+      event.#reverse();
     }
   }
 
