@@ -1,4 +1,4 @@
-import { assert, assertEquals, assertFalse, assertThrows } from "assert/mod.ts";
+import { assert, assertEquals, assertFalse, assertThrows } from "@std/assert";
 import { InvalidCurrencyError, Money } from "./money.ts";
 
 Deno.test("Equality of two Money objects", () => {

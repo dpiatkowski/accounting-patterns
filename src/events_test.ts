@@ -1,4 +1,4 @@
-import { assertThrows } from "assert/mod.ts";
+import { assertThrows } from "@std/assert";
 import { Customer } from "./customer.ts";
 import { TaxEvent, UsageAccountingEvent } from "./events.ts";
 import { Money } from "./money.ts";

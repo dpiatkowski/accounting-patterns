@@ -3,7 +3,7 @@ import {
   assertEquals,
   assertExists,
   assertThrows,
-} from "assert/mod.ts";
+} from "@std/assert";
 import { Customer } from "./customer.ts";
 import { Entry, EntryType } from "./entry.ts";
 import { MonetaryEvent, UsageAccountingEvent } from "./events.ts";

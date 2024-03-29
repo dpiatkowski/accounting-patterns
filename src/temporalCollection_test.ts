@@ -1,4 +1,4 @@
-import { assertEquals } from "assert/mod.ts";
+import { assertEquals } from "@std/assert";
 import { SingleTemporalCollection } from "./temporalCollection.ts";
 
 Deno.test("Empty SingleTemporalCollection", () => {

@@ -1,4 +1,4 @@
-import { assert, assertThrows } from "assert/mod.ts";
+import { assert, assertThrows } from "@std/assert";
 import { Account, deposit, withdrawal } from "./account.ts";
 import { DateRange } from "./dateRange.ts";
 import { Money } from "./money.ts";

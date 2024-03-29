@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "assert/mod.ts";
+import { assertEquals, assertThrows } from "@std/assert";
 import { Account } from "./account.ts";
 import {
   AccountingTransaction,
