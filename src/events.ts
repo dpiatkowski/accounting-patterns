@@ -100,10 +100,10 @@ class AccountingEvent {
 class MonetaryEvent extends AccountingEvent {
   constructor(
     readonly amount: Money,
-    readonly type: EventType,
-    readonly whenOccured: Temporal.Instant,
-    readonly whenNoticed: Temporal.Instant,
-    readonly customer: Customer,
+    override readonly type: EventType,
+    override readonly whenOccured: Temporal.Instant,
+    override readonly whenNoticed: Temporal.Instant,
+    override readonly customer: Customer,
   ) {
     super(type, whenOccured, whenNoticed, customer);
   }
@@ -130,9 +130,9 @@ class TaxEvent extends MonetaryEvent {
 class UsageAccountingEvent extends AccountingEvent {
   constructor(
     readonly amount: Money,
-    readonly whenOccured: Temporal.Instant,
-    readonly whenNoticed: Temporal.Instant,
-    readonly customer: Customer,
+    override readonly whenOccured: Temporal.Instant,
+    override readonly whenNoticed: Temporal.Instant,
+    override readonly customer: Customer,
   ) {
     super("Usage", whenOccured, whenNoticed, customer);
   }
